@@ -6,12 +6,6 @@ import petService from "../services/pet.service.js";
 
 const router = Router();
 
-// Endpoint temporal para probar
-router.get("/", (req, res) => {
-    res.send("Mocks router funcionando");
-});
-
-
 router.get("/mockingpets", async (req, res) => {
     try {
         const pets = generateMockPets(100);

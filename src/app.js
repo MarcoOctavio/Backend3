@@ -64,3 +64,5 @@ app.use('/api/mocks', mocksRouter);
 app.use(errorHandler);
 
 app.listen(PORT,()=>logger.info(`Listening on ${PORT}`))
+
+export default app;
