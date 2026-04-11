@@ -8,5 +8,6 @@ export const errorHandler = (err, req, res, next) => {
         message: err.message,
         cause: err.cause
     });
+    req.logger.error(`Error: ${err.name} - ${err.message}`);
 
 };
