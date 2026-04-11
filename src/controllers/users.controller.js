@@ -1,4 +1,6 @@
 import { usersService } from "../services/index.js"
+import CustomError from '../errors/customError.js';
+import { errorDictionary } from '../errors/errorsDictionary.js';
 
 const getAllUsers = async(req,res)=>{
     const users = await usersService.getAll();
