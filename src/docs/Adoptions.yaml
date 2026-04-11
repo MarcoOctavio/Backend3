@@ -1,0 +1,55 @@
+paths:
+
+  /api/adoptions:
+    get:
+      summary: Get all adoptions
+      tags:
+        - Adoptions
+
+      responses:
+        "200":
+          description: List of adoptions
+
+  /api/adoptions/{aid}:
+    get:
+      summary: Get adoption by ID
+      tags:
+        - Adoptions
+
+      parameters:
+        - name: aid
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Adoption found
+        "404":
+          description: Adoption not found
+
+  /api/adoptions/{uid}/{pid}:
+    post:
+      summary: Create adoption
+      tags:
+        - Adoptions
+
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          schema:
+            type: string
+
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Adoption created
+        "404":
+          description: User or Pet not found

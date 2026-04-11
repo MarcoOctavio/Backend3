@@ -1,6 +1,8 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
 
 import usersRouter from './routes/users.router.js';
 import petsRouter from './routes/pets.router.js';
@@ -18,6 +20,26 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT||8080;
+const swaggerOptions = {
+    definition: {
+    openapi: "3.0.1",
+    info: {
+        title: "Adoptme API",
+        description: "API documentation for Adoptme project",
+        version: "1.0.0"
+    },
+    tags: [
+        { name: "Sessions", description: "User authentication" },
+        { name: "Pets", description: "Pets management" },
+        { name: "Adoptions", description: "Adoption management" }
+    ]
+},
+    apis: ["./src/docs/**/*.yaml"]
+};
+
+const specs = swaggerJSDoc(swaggerOptions);
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(specs));
+
 app.use(addLogger);
 
 mongoose.set("strictQuery", true);

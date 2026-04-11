@@ -1,0 +1,60 @@
+components:
+
+  schemas:
+
+    User:
+
+      type: object
+
+      properties:
+
+        _id:
+          type: string
+
+        first_name:
+          type: string
+
+        last_name:
+          type: string
+
+        email:
+          type: string
+
+        role:
+          type: string
+
+        pets:
+          type: array
+
+    Pet:
+
+      type: object
+
+      properties:
+
+        _id:
+          type: string
+
+        name:
+          type: string
+
+        specie:
+          type: string
+
+        adopted:
+          type: boolean
+
+    Adoption:
+
+      type: object
+
+      properties:
+
+        _id:
+          type: string
+
+        owner:
+          type: string
+
+        pet:
+          type: string
