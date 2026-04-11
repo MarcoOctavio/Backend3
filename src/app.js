@@ -19,21 +19,15 @@ const app = express();
 const PORT = process.env.PORT||8080;
 app.use(addLogger);
 
-const startServer = async () => {
-    try {
+mongoose.set("strictQuery", true);
 
-        await mongoose.connect(process.env.MONGO_URI);
-
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
         logger.info("MongoDB connected");
-
-    } catch (error) {
-
+    })
+    .catch((error) => {
         logger.error(error.stack);
-
-    }
-};
-
-startServer();
+    });
 
 app.use(express.json());
 app.use(cookieParser());
