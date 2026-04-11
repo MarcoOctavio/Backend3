@@ -7,6 +7,7 @@ import petsRouter from './routes/pets.router.js';
 import adoptionsRouter from './routes/adoption.router.js';
 import sessionsRouter from './routes/sessions.router.js';
 import mockingRouter from './routes/mocking.router.js';
+import mocksRouter from './routes/mocks.router.js';
 import dotenv from 'dotenv';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { addLogger } from './middlewares/logger.middleware.js';
@@ -37,7 +38,7 @@ app.use('/api/pets',petsRouter);
 app.use('/api/adoptions',adoptionsRouter);
 app.use('/api/sessions',sessionsRouter);
 app.use('/', loggerRouter);
-app.use('/api/mocking',mockingRouter);
+app.use('/api/mocks', mocksRouter);
 
 app.use(errorHandler);
 
