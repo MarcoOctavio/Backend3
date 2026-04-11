@@ -25,7 +25,7 @@ const register = async (req, res) => {
         req.logger.info(`User registered with email: ${email}`);
     } catch (error) {
         res.status(500).send({ status: "error", error: "Internal Server Error" });
-        req.logger.error(`Error in register controller: ${error.message}`);
+        req.logger.error(error.stack);
     }
 }
 

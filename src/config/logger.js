@@ -19,6 +19,12 @@ const customLevels = {
     }
 };
 
+format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.colorize(),
+    winston.format.simple()
+)
+
 winston.addColors(customLevels.colors);
 
 const devLogger = winston.createLogger({

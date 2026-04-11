@@ -28,7 +28,7 @@ const startServer = async () => {
 
     } catch (error) {
 
-        logger.error("Database connection failed:", error);
+        logger.error(error.stack);
 
     }
 };
@@ -42,7 +42,7 @@ app.use('/api/users',usersRouter);
 app.use('/api/pets',petsRouter);
 app.use('/api/adoptions',adoptionsRouter);
 app.use('/api/sessions',sessionsRouter);
-app.use('/api/logger', loggerRouter);
+app.use('/', loggerRouter);
 app.use('/api/mocking',mockingRouter);
 
 app.use(errorHandler);
