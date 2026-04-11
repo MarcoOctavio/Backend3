@@ -58,3 +58,17 @@ components:
 
         pet:
           type: string
+    
+    documents:
+      type: array
+    items:
+      type: object
+      properties:
+    name:
+      type: string
+    reference:
+      type: string
+
+last_connection:
+  type: string
+  format: date-time

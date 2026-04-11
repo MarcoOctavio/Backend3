@@ -31,22 +31,56 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
     const { email, password } = req.body;
-    if (!email || !password) 
-        return res.status(400).send({ status: "error", error: "Incomplete values" });
-    req.logger.info(`Attempting to log in user with email: ${email}`);
+
     const user = await usersService.getUserByEmail(email);
-    if(!user) 
-        return res.status(404).send({status:"error",error:"User doesn't exist"});
-    req.logger.info(`User found with email: ${email}, validating password`);
-    const isValidPassword = await passwordValidation(user,password);
-    if(!isValidPassword) 
-        return res.status(400).send({status:"error",error:"Incorrect password"});
-    req.logger.info(`Password validated for user with email: ${email}, generating token`);
-    const userDto = UserDTO.getUserTokenFrom(user);
-    const token = jwt.sign(userDto,'tokenSecretJWT',{expiresIn:"1h"});
-    res.cookie('coderCookie',token,{maxAge:3600000}).send({status:"success",message:"Logged in"})
+
+    if (!user) {
+        return res.status(404).send({ status: "error", message: "User not found" });
+    }
+
+    if (!passwordValidation(user, password)) {
+        req.logger.info(`Failed login attempt for email: ${email} - Invalid password`);
+        return res.status(401).send({ status: "error", message: "Invalid credentials" });
+    }
+    user.last_connection = new Date();
+    await user.save();
+    req.session.user = {
+        id: user._id,
+        email: user.email,
+        role: user.role
+    };
+
+    res.send({ status: "success", message: "Login successful" });
     req.logger.info(`User logged in with email: ${email}`);
-}
+};
+
+const logout = async (req, res) => {
+    const userId = req.session.user?.id;
+
+    if (userId) {
+        const user = await usersService.getUserById(userId);
+
+        if (user) {
+            user.last_connection = new Date();
+            await user.save();
+        }
+    }
+
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).send({
+                status: "error",
+                message: "Logout error"
+            });
+        }
+
+        res.send({
+            status: "success",
+            message: "Logout successful"
+        });
+        req.logger.info(`User logged out with ID: ${userId}`);
+    });
+};
 
 const current = async(req,res) =>{
     const cookie = req.cookies['coderCookie']
@@ -64,8 +98,8 @@ const unprotectedLogin  = async(req,res) =>{
     const user = await usersService.getUserByEmail(email);
     if(!user) 
         return res.status(404).send({status:"error",error:"User doesn't exist"});
-    const isValidPassword = await passwordValidation(user,password);
-    if(!isValidPassword) 
+    const passwordValidation = await passwordValidation(user,password);
+    if(!passwordValidation) 
         return res.status(400).send({status:"error",error:"Incorrect password"});
     const token = jwt.sign(user,'tokenSecretJWT',{expiresIn:"1h"});
     res.cookie('unprotectedCookie',token,{maxAge:3600000}).send({status:"success",message:"Unprotected Logged in"})
@@ -79,9 +113,9 @@ const unprotectedCurrent = async(req,res)=>{
     req.logger.info(`Current user retrieved with email: ${user.email} (unprotected)`);
 }
 export default {
-    current,
-    login,
     register,
+    login,
+    logout,
     current,
     unprotectedLogin,
     unprotectedCurrent
