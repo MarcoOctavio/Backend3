@@ -3,6 +3,8 @@
 API REST para la gestión de adopción de mascotas desarrollada con **Node.js**, **Express** y **MongoDB**.
 El proyecto implementa buenas prácticas de arquitectura backend, documentación con Swagger, testing automatizado y despliegue mediante Docker.
 
+Hecho por Marco Venegas
+
 ---
 
 ## 🚀 Tecnologías
