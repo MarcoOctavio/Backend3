@@ -1,10 +1,10 @@
 # Adoptme Backend API
 
-API REST para gestionar usuarios, mascotas y adopciones. El proyecto esta desarrollado con Node.js, Express y MongoDB, e incluye documentacion Swagger, tests funcionales con Mocha/Chai/Supertest y dockerizacion optimizada.
+API REST para gestionar usuarios, mascotas y adopciones. El proyecto esta desarrollado con Node.js, Express y MongoDB, e incluye documentación Swagger, tests funcionales con Mocha/Chai/Supertest y dockerizacion optimizada.
 
 Autor: Marco O. Venegas
 
-## Tecnologias
+## Tecnologías
 
 - Node.js 20
 - Express
@@ -39,7 +39,7 @@ Cuando se ejecute desde Docker en macOS o Windows usando una base MongoDB local 
 MONGO_URI=mongodb://host.docker.internal:27017/adoptme
 ```
 
-## Instalacion local
+## Instalación local
 
 ```bash
 npm install
@@ -152,10 +152,10 @@ Routes -> Controllers -> Services -> Repository -> DAO -> Models -> Database
 
 Carpetas principales:
 
-- `src/app.js`: configura Express, middlewares, Swagger, conexion a MongoDB y routers.
-- `src/routes`: define endpoints HTTP por modulo.
+- `src/app.js`: configura Express, middlewares, Swagger, conexión a MongoDB y routers.
+- `src/routes`: define endpoints HTTP por módulo.
 - `src/controllers`: maneja request/response y coordina servicios.
-- `src/services`: contiene logica de negocio.
+- `src/services`: contiene lógica de negocio.
 - `src/repository`: abstrae operaciones de persistencia.
 - `src/dao`: acceso a datos y modelos Mongoose.
 - `src/docs`: especificaciones Swagger y ejemplos.
