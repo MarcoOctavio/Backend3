@@ -1,0 +1,45 @@
+
+> plantilladocumentacion@1.0.0 test
+> mocha --exit test/**/*.test.js
+
+◇ injected env (2) from .env // tip: ⌘ enable debugging { debug: true }
+
+
+  Adoptions Router
+    ✔ Debe crear una adopción correctamente
+    ✔ Debe obtener todas las adopciones y encontrar la adopción creada
+    ✔ Debe obtener una adopción por ID
+    ✔ Debe rechazar una adopción si la mascota ya fue adoptada
+    ✔ Debe retornar 404 si el usuario no existe
+
+  Pets Router
+    ✔ Debe obtener todas las mascotas
+    ✔ Debe crear una mascota
+    ✔ Debe crear una mascota con datos dinámicos
+    ✔ Debe actualizar una mascota
+    ✔ Debe eliminar una mascota
+    ✔ Debe fallar si faltan datos obligatorios
+
+  Sessions Router
+    POST /api/sessions/register
+      ✔ Debe registrar un usuario correctamente (53ms)
+    POST /api/sessions/login
+      ✔ Debe loguear un usuario correctamente (55ms)
+
+  Users Router
+    ✔ Debe crear un usuario (52ms)
+    ✔ Debe subir documentos al usuario
+
+  Users Router
+    ✔ Debe crear un usuario correctamente (52ms)
+    ✔ Debe obtener todos los usuarios
+    ✔ Debe obtener un usuario por ID
+    ✔ Debe actualizar un usuario
+    ✔ Debe eliminar un usuario
+    ✔ Debe retornar error si el usuario no existe
+    ✔ Debe registrar un usuario (53ms)
+    ✔ Debe subir documentos al usuario
+
+
+  23 passing (429ms)
+

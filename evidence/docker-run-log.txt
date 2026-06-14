@@ -1,0 +1,3 @@
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+{"level":"info","message":"Listening on 8080"}
+{"level":"info","message":"MongoDB connected"}
