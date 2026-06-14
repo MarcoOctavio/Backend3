@@ -33,5 +33,33 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Audit production dependencies
+        run: npm audit --omit=dev
+
       - name: Run tests
         run: npm test
+
+      - name: Build Docker image
+        run: docker build -t adoptme-backend:test .
+
+      - name: Trivy image report
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v trivy-cache:/root/.cache \
+            aquasec/trivy:latest image \
+            --severity HIGH,CRITICAL \
+            --ignore-unfixed \
+            --exit-code 0 \
+            adoptme-backend:test
+
+      - name: Trivy critical gate
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v trivy-cache:/root/.cache \
+            aquasec/trivy:latest image \
+            --severity CRITICAL \
+            --ignore-unfixed \
+            --exit-code 1 \
+            adoptme-backend:test

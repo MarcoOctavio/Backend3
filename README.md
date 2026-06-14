@@ -107,6 +107,37 @@ docker run --name adoptme-backend \
 
 Si MongoDB corre en otro host, reemplazar `MONGO_URI` por la URI correspondiente.
 
+## Seguridad de dependencias e imagen
+
+La imagen Docker instala solo dependencias de produccion con `npm ci --omit=dev`.
+
+Controles aplicados:
+
+- Dependencias de produccion actualizadas para resolver vulnerabilidades reportadas por `npm audit`.
+- La etapa final del Dockerfile ejecuta `apk upgrade --no-cache` para tomar parches de seguridad de Alpine.
+- La etapa final elimina `npm` y `npx`, porque solo se necesita `node` para ejecutar la API.
+- Verificacion local recomendada:
+
+```bash
+npm audit --omit=dev
+```
+
+- El workflow de GitHub Actions ejecuta `npm audit --omit=dev` en cada `push` y `pull_request`.
+- El workflow construye la imagen Docker y ejecuta un escaneo con Trivy.
+- Trivy genera un reporte para vulnerabilidades `HIGH` y `CRITICAL`.
+- El pipeline falla si Trivy encuentra vulnerabilidades `CRITICAL` no ignoradas.
+
+Estado actual:
+
+```text
+npm audit --omit=dev
+found 0 vulnerabilities
+```
+
+El build local de Docker tambien reporta `found 0 vulnerabilities` durante `npm ci --omit=dev`.
+
+`npm audit` aun reporta vulnerabilidades solo en dependencias de desarrollo asociadas a `mocha -> serialize-javascript`. Esas dependencias no se instalan en la imagen Docker porque el build usa `--omit=dev`.
+
 ## Imagen Docker
 
 Nombre y tag local:
