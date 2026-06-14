@@ -1,121 +1,135 @@
-# 🐾 Adoptme Backend API
+# Adoptme Backend API
 
-API REST para la gestión de adopción de mascotas desarrollada con **Node.js**, **Express** y **MongoDB**.
-El proyecto implementa buenas prácticas de arquitectura backend, documentación con Swagger, testing automatizado y despliegue mediante Docker.
+API REST para gestionar usuarios, mascotas y adopciones. El proyecto esta desarrollado con Node.js, Express y MongoDB, e incluye documentacion Swagger, tests funcionales con Mocha/Chai/Supertest y dockerizacion optimizada.
 
-Hecho por Marco Venegas
+Autor: Marco O. Venegas
 
----
+## Tecnologias
 
-## 🚀 Tecnologías
+- Node.js 20
+- Express
+- MongoDB / Mongoose
+- Swagger
+- Docker
+- Mocha / Chai / Supertest
+- Winston
+- Multer
+- JWT
 
-* Node.js
-* Express
-* MongoDB / Mongoose
-* Swagger
-* Docker
-* Mocha / Chai
-* Winston
-* Multer
-* JWT
+## Requisitos
 
----
+- Node.js 20 o superior
+- npm
+- MongoDB disponible localmente o mediante una URI remota
+- Docker Desktop o Docker Engine, solo si se ejecuta con contenedor
 
-## ▶️ Ejecutar el proyecto
+## Variables de entorno
 
-### 1. Instalar dependencias
+Crear un archivo `.env` en la raiz del proyecto:
 
-```
-npm install
-```
-
-### 2. Configurar variables de entorno
-
-Crear archivo `.env`:
-
-```
+```env
 PORT=8080
 MONGO_URI=mongodb://127.0.0.1:27017/adoptme
 JWT_SECRET=superSecretKey
 ```
 
-### 3. Ejecutar servidor
+Cuando se ejecute desde Docker en macOS o Windows usando una base MongoDB local del host, usar:
 
+```env
+MONGO_URI=mongodb://host.docker.internal:27017/adoptme
 ```
+
+## Instalacion local
+
+```bash
+npm install
+```
+
+## Ejecutar el proyecto localmente
+
+```bash
 npm start
 ```
 
 Servidor disponible en:
 
-```
+```text
 http://localhost:8080
 ```
 
----
+Documentacion Swagger:
 
-## 📚 Documentación Swagger
-
-Disponible en:
-
-```
+```text
 http://localhost:8080/api/docs
 ```
 
-Los ejemplos de pruebas manuales con cURL están disponibles en:
+## Ejecutar tests
 
-```
-src/docs/curl-examples.md
-```
-
----
-
-## 🧪 Testing
-
-Ejecutar pruebas automatizadas:
-
-```
+```bash
 npm test
 ```
 
-La suite incluye pruebas específicas para `adoption.router.js`:
+La suite incluye tests funcionales para `adoption.router.js`:
 
-* creación de adopciones
-* búsqueda/listado de adopciones
-* búsqueda por ID
-* rechazo de mascotas ya adoptadas
-* error cuando el usuario no existe
+- `POST /api/adoptions/:uid/:pid`: crea una adopcion correctamente.
+- `GET /api/adoptions`: lista adopciones y permite verificar que existe la adopcion creada.
+- `GET /api/adoptions/:aid`: obtiene una adopcion por ID.
+- `POST /api/adoptions/:uid/:pid`: rechaza una mascota ya adoptada.
+- `POST /api/adoptions/:uid/:pid`: retorna error 404 cuando el usuario no existe.
 
-El workflow de GitHub Actions ejecuta estos tests automáticamente en cada `push` y `pull_request` hacia `main` o `develop`.
+## Docker
 
----
+El `Dockerfile` usa multi-stage build:
 
-## 🐳 Docker
+- `node:20-alpine` como imagen base liviana.
+- Una etapa `dependencies` instala dependencias con `npm ci --omit=dev`.
+- La etapa `runner` copia solo `node_modules`, `package*.json` y `src`.
+- `NODE_ENV=production` queda definido en runtime.
+- El contenedor ejecuta la app con el usuario no root `node`.
+- `.dockerignore` excluye `node_modules`, logs de npm, `.git` y `.gitignore` del contexto de build.
 
-El `Dockerfile` usa multi-stage build e inicia la aplicación con el usuario no root `node`.
+## Construir imagen Docker
 
-### Imagen Docker publicada
-
-Puedes descargar y ejecutar la imagen desde Docker Hub:
-
+```bash
+docker build -t marcoven/adoptme-backend:2.0 .
 ```
+
+## Ejecutar contenedor
+
+```bash
+docker run --name adoptme-backend \
+  -p 8080:8080 \
+  -e PORT=8080 \
+  -e MONGO_URI=mongodb://host.docker.internal:27017/adoptme \
+  -e JWT_SECRET=superSecretKey \
+  marcoven/adoptme-backend:2.0
+```
+
+Si MongoDB corre en otro host, reemplazar `MONGO_URI` por la URI correspondiente.
+
+## Imagen Docker
+
+Nombre y tag local:
+
+```text
+marcoven/adoptme-backend:2.0
+```
+
+Imagen publicada en Docker Hub:
+
+```text
+marcoven/adoptme-backend:2.0
+```
+
+Referencia compartida:
+
+```text
 https://hub.docker.com/repository/docker/marcoven/adoptme-backend/tags/2.0/sha256-cbb8ce8b02ca28213cbbd69b7ba07ebf5adcbb1da2fe1f42202f74face623598
 ```
 
-### Ejecutar contenedor
+## Endpoints principales
 
-```
-docker pull marcoven/adoptme-backend:2.0
-```
-
-```
-docker run -p 8080:8080 marcoven/adoptme-backend:2.0
-```
-
----
-
-## 📡 Endpoints principales
-
-```
+```text
 GET    /api/users
 POST   /api/users
 
@@ -130,19 +144,21 @@ POST   /api/sessions/login
 POST   /api/sessions/register
 ```
 
----
+## Estructura general
 
-## 🧱 Arquitectura
-
-El proyecto sigue una arquitectura por capas:
-
-```
-Routes → Controllers → Services → DAO → Database
+```text
+Routes -> Controllers -> Services -> Repository -> DAO -> Models -> Database
 ```
 
----
+Carpetas principales:
 
-## 👨‍💻 Autor
-
-Marco O. Venegas
-Backend Developer
+- `src/app.js`: configura Express, middlewares, Swagger, conexion a MongoDB y routers.
+- `src/routes`: define endpoints HTTP por modulo.
+- `src/controllers`: maneja request/response y coordina servicios.
+- `src/services`: contiene logica de negocio.
+- `src/repository`: abstrae operaciones de persistencia.
+- `src/dao`: acceso a datos y modelos Mongoose.
+- `src/docs`: especificaciones Swagger y ejemplos.
+- `src/middlewares`: logger y manejo centralizado de errores.
+- `test`: tests funcionales con Mocha, Chai y Supertest.
+- `public`: destino de archivos subidos.
