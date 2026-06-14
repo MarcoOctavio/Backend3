@@ -1,7 +1,8 @@
 import { usersService } from "../services/index.js";
 import { createHash, passwordValidation } from "../utils/index.js";
 import jwt from 'jsonwebtoken';
-import UserDTO from '../dto/User.dto.js';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'tokenSecretJWT';
 
 const register = async (req, res) => {
     try {
@@ -20,8 +21,7 @@ const register = async (req, res) => {
             password: hashedPassword
         }
         let result = await usersService.create(user);
-        console.log(result);
-        res.send({ status: "success", payload: result._id });
+        res.send({ status: "success", payload: result });
         req.logger.info(`User registered with email: ${email}`);
     } catch (error) {
         res.status(500).send({ status: "error", error: "Internal Server Error" });
@@ -38,26 +38,29 @@ const login = async (req, res) => {
         return res.status(404).send({ status: "error", message: "User not found" });
     }
 
-    if (!passwordValidation(user, password)) {
+    if (!await passwordValidation(user, password)) {
         req.logger.info(`Failed login attempt for email: ${email} - Invalid password`);
         return res.status(401).send({ status: "error", message: "Invalid credentials" });
     }
     user.last_connection = new Date();
     await user.save();
-    req.session.user = {
+    const token = jwt.sign({
         id: user._id,
         email: user.email,
         role: user.role
-    };
+    }, JWT_SECRET, { expiresIn: "1h" });
 
-    res.send({ status: "success", message: "Login successful" });
+    res.cookie('coderCookie', token, { maxAge: 3600000, httpOnly: true }).send({ status: "success", message: "Login successful" });
     req.logger.info(`User logged in with email: ${email}`);
 };
 
 const logout = async (req, res) => {
-    const userId = req.session.user?.id;
+    const cookie = req.cookies['coderCookie'];
+    let userId;
 
-    if (userId) {
+    if (cookie) {
+        const sessionUser = jwt.verify(cookie, JWT_SECRET);
+        userId = sessionUser.id;
         const user = await usersService.getUserById(userId);
 
         if (user) {
@@ -66,25 +69,16 @@ const logout = async (req, res) => {
         }
     }
 
-    req.session.destroy(err => {
-        if (err) {
-            return res.status(500).send({
-                status: "error",
-                message: "Logout error"
-            });
-        }
-
-        res.send({
-            status: "success",
-            message: "Logout successful"
-        });
-        req.logger.info(`User logged out with ID: ${userId}`);
+    res.clearCookie('coderCookie').send({
+        status: "success",
+        message: "Logout successful"
     });
-};
+    req.logger.info(`User logged out with ID: ${userId}`);
+}
 
 const current = async(req,res) =>{
     const cookie = req.cookies['coderCookie']
-    const user = jwt.verify(cookie,'tokenSecretJWT');
+    const user = jwt.verify(cookie, JWT_SECRET);
     if(user)
         return res.send({status:"success",payload:user})
     req.logger.info(`Current user retrieved with email: ${user.email}`);
@@ -98,16 +92,16 @@ const unprotectedLogin  = async(req,res) =>{
     const user = await usersService.getUserByEmail(email);
     if(!user) 
         return res.status(404).send({status:"error",error:"User doesn't exist"});
-    const passwordValidation = await passwordValidation(user,password);
-    if(!passwordValidation) 
+    const isValidPassword = await passwordValidation(user,password);
+    if(!isValidPassword)
         return res.status(400).send({status:"error",error:"Incorrect password"});
-    const token = jwt.sign(user,'tokenSecretJWT',{expiresIn:"1h"});
+    const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, JWT_SECRET,{expiresIn:"1h"});
     res.cookie('unprotectedCookie',token,{maxAge:3600000}).send({status:"success",message:"Unprotected Logged in"})
     req.logger.info(`User logged in with email: ${email} (unprotected)`);
 }
 const unprotectedCurrent = async(req,res)=>{
     const cookie = req.cookies['unprotectedCookie']
-    const user = jwt.verify(cookie,'tokenSecretJWT');
+    const user = jwt.verify(cookie, JWT_SECRET);
     if(user)
         return res.send({status:"success",payload:user})
     req.logger.info(`Current user retrieved with email: ${user.email} (unprotected)`);

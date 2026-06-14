@@ -1,8 +1,10 @@
 import chai from "chai";
 import supertest from "supertest";
+import app from "../src/app.js";
+import { faker } from "@faker-js/faker";
 
 const expect = chai.expect;
-const requester = supertest("http://localhost:8080");
+const requester = supertest(app);
 
 describe("Users Router", () => {
 
@@ -15,7 +17,7 @@ describe("Users Router", () => {
             .send({
                 first_name: "Doc",
                 last_name: "Test",
-                email: "doc@test.com",
+                email: faker.internet.email(),
                 age: 25,
                 password: "123456"
             });

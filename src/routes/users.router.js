@@ -1,8 +1,15 @@
 import { Router } from "express";
 import { uploader } from "../utils/multer.js";
 import User from "../dao/models/User.js";
+import usersController from "../controllers/users.controller.js";
 
 const router = Router();
+
+router.get("/", usersController.getAllUsers);
+router.post("/", usersController.createUser);
+router.get("/:uid", usersController.getUser);
+router.put("/:uid", usersController.updateUser);
+router.delete("/:uid", usersController.deleteUser);
 
 router.post(
     "/:uid/documents",

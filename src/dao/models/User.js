@@ -15,6 +15,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "user"
     },
+    pets: [
+        {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: "Pets"
+        }
+    ],
 
     documents: [
         {

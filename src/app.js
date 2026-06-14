@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
+import { pathToFileURL } from 'url';
 
 import usersRouter from './routes/users.router.js';
 import petsRouter from './routes/pets.router.js';
@@ -63,6 +64,8 @@ app.use('/api/mocks', mocksRouter);
 
 app.use(errorHandler);
 
-app.listen(PORT,()=>logger.info(`Listening on ${PORT}`))
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+    app.listen(PORT,()=>logger.info(`Listening on ${PORT}`))
+}
 
 export default app;

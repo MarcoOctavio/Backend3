@@ -1,1 +1,9 @@
 node_modules
+.env
+errors.log
+public/documents/*
+public/img/*
+public/pets/*
+!public/documents/.gitkeep
+!public/img/.gitkeep
+!public/pets/.gitkeep

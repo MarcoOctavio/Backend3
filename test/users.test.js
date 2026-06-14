@@ -142,11 +142,11 @@ describe('Users Router', () => {
             .send({
                 first_name: "Doc",
                 last_name: "Test",
-                email: "doc@test.com",
+                email: faker.internet.email(),
                 password: "123456"
             });
 
-        userId = response.body.payload;
+        userId = response.body.payload._id;
 
         expect(userId).to.exist;
 
