@@ -1,20 +1,16 @@
-# Imagen base oficial de Node
-FROM node:20
-
-# Directorio de trabajo dentro del contenedor
+FROM node:20-alpine AS dependencies
 WORKDIR /app
-
-# Copiar package.json y package-lock.json
 COPY package*.json ./
+RUN npm ci --omit=dev
 
-# Instalar dependencias
-RUN npm install
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
 
-# Copiar el resto del código
-COPY . .
+COPY --from=dependencies /app/node_modules ./node_modules
+COPY package*.json ./
+COPY src ./src
 
-# Exponer el puerto de la app
+USER node
 EXPOSE 8080
-
-# Comando para iniciar la aplicación
 CMD ["node", "src/app.js"]

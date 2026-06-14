@@ -1,55 +1,122 @@
 paths:
-
   /api/adoptions:
     get:
       summary: Get all adoptions
+      description: Returns every adoption registered in the system.
       tags:
         - Adoptions
-
       responses:
         "200":
-          description: List of adoptions
+          description: List of adoptions retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - payload
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  payload:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Adoption'
 
   /api/adoptions/{aid}:
     get:
       summary: Get adoption by ID
+      description: Returns one adoption by its MongoDB ObjectId.
       tags:
         - Adoptions
-
       parameters:
         - name: aid
           in: path
           required: true
+          description: Adoption MongoDB ObjectId
           schema:
             type: string
-
+            pattern: '^[a-fA-F0-9]{24}$'
+            example: 64f000000000000000000000
       responses:
         "200":
           description: Adoption found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - payload
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  payload:
+                    $ref: '#/components/schemas/Adoption'
+        "400":
+          description: Invalid adoption ID format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         "404":
           description: Adoption not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/adoptions/{uid}/{pid}:
     post:
       summary: Create adoption
+      description: Creates an adoption for an existing user and an existing pet that has not been adopted yet.
       tags:
         - Adoptions
-
       parameters:
         - name: uid
           in: path
           required: true
+          description: User MongoDB ObjectId
           schema:
             type: string
-
+            pattern: '^[a-fA-F0-9]{24}$'
+            example: 64f000000000000000000001
         - name: pid
           in: path
           required: true
+          description: Pet MongoDB ObjectId
           schema:
             type: string
-
+            pattern: '^[a-fA-F0-9]{24}$'
+            example: 64f000000000000000000002
       responses:
         "200":
-          description: Adoption created
+          description: Adoption created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - message
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Pet adopted
+        "400":
+          description: Invalid ID format or pet already adopted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         "404":
-          description: User or Pet not found
+          description: User or pet not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
