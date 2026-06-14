@@ -61,6 +61,12 @@ Disponible en:
 http://localhost:8080/api/docs
 ```
 
+Los ejemplos de pruebas manuales con cURL están disponibles en:
+
+```
+src/docs/curl-examples.md
+```
+
 ---
 
 ## 🧪 Testing
@@ -71,9 +77,21 @@ Ejecutar pruebas automatizadas:
 npm test
 ```
 
+La suite incluye pruebas específicas para `adoption.router.js`:
+
+* creación de adopciones
+* búsqueda/listado de adopciones
+* búsqueda por ID
+* rechazo de mascotas ya adoptadas
+* error cuando el usuario no existe
+
+El workflow de GitHub Actions ejecuta estos tests automáticamente en cada `push` y `pull_request` hacia `main` o `develop`.
+
 ---
 
 ## 🐳 Docker
+
+El `Dockerfile` usa multi-stage build e inicia la aplicación con el usuario no root `node`.
 
 ### Imagen Docker publicada
 
@@ -104,7 +122,9 @@ POST   /api/users
 GET    /api/pets
 POST   /api/pets
 
-POST   /api/adoptions
+GET    /api/adoptions
+GET    /api/adoptions/:aid
+POST   /api/adoptions/:uid/:pid
 
 POST   /api/sessions/login
 POST   /api/sessions/register

@@ -55,7 +55,7 @@ curl "$BASE_URL/api/pets"
 
 ## Adoptions
 
-Reemplaza `USER_ID` y `PET_ID` por IDs reales generados previamente.
+Reemplaza `USER_ID`, `PET_ID` y `ADOPTION_ID` por IDs reales generados previamente. Los IDs de MongoDB deben ser strings hexadecimales de 24 caracteres.
 
 ### Crear adopción
 
@@ -74,3 +74,11 @@ curl "$BASE_URL/api/adoptions"
 ```bash
 curl "$BASE_URL/api/adoptions/ADOPTION_ID"
 ```
+
+### Flujo rápido completo
+
+1. Crea un usuario y copia el valor de `payload._id`.
+2. Crea una mascota y copia el valor de `payload._id`.
+3. Usa ambos IDs en `POST /api/adoptions/USER_ID/PET_ID`.
+4. Ejecuta `GET /api/adoptions` para copiar el `_id` de la adopción creada.
+5. Valida la búsqueda con `GET /api/adoptions/ADOPTION_ID`.

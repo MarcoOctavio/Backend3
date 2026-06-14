@@ -1,74 +1,125 @@
 components:
-
   schemas:
+    ObjectId:
+      type: string
+      minLength: 24
+      maxLength: 24
+      pattern: "^[a-fA-F0-9]{24}$"
+      example: "64f000000000000000000000"
 
     User:
-
       type: object
-
+      required:
+        - _id
+        - first_name
+        - last_name
+        - email
+        - role
       properties:
-
         _id:
-          type: string
-
+          $ref: "#/components/schemas/ObjectId"
         first_name:
           type: string
-
+          example: Marco
         last_name:
           type: string
-
+          example: Venegas
         email:
           type: string
-
+          format: email
+          example: marco@test.com
         role:
           type: string
-
+          enum:
+            - user
+            - admin
+          example: user
         pets:
           type: array
+          items:
+            $ref: "#/components/schemas/ObjectId"
+        documents:
+          type: array
+          items:
+            type: object
+            required:
+              - name
+              - reference
+            properties:
+              name:
+                type: string
+                example: dni.pdf
+              reference:
+                type: string
+                example: public/documents/171234567-dni.pdf
+        last_connection:
+          type: string
+          format: date-time
+          nullable: true
 
     Pet:
-
       type: object
-
+      required:
+        - _id
+        - name
+        - specie
+        - adopted
       properties:
-
         _id:
-          type: string
-
+          $ref: "#/components/schemas/ObjectId"
         name:
           type: string
-
+          example: Firulais
         specie:
           type: string
-
+          example: Dog
+        birthDate:
+          type: string
+          format: date-time
+          example: "2020-01-01T00:00:00.000Z"
         adopted:
           type: boolean
+          example: false
+        owner:
+          allOf:
+            - $ref: "#/components/schemas/ObjectId"
+          nullable: true
+        image:
+          type: string
+          example: /public/img/firulais.jpg
 
     Adoption:
-
       type: object
-
+      required:
+        - _id
+        - owner
+        - pet
       properties:
-
         _id:
-          type: string
-
+          $ref: "#/components/schemas/ObjectId"
         owner:
-          type: string
-
+          $ref: "#/components/schemas/ObjectId"
         pet:
-          type: string
-    
-    documents:
-      type: array
-    items:
-      type: object
-      properties:
-    name:
-      type: string
-    reference:
-      type: string
+          $ref: "#/components/schemas/ObjectId"
+      example:
+        _id: "64f000000000000000000010"
+        owner: "64f000000000000000000001"
+        pet: "64f000000000000000000002"
 
-last_connection:
-  type: string
-  format: date-time
+    ErrorResponse:
+      type: object
+      required:
+        - status
+        - error
+      properties:
+        status:
+          type: string
+          enum:
+            - error
+          example: error
+        error:
+          type: string
+          example: Pet is already adopted
+        message:
+          type: string
+          example: Invalid request

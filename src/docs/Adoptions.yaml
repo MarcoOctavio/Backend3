@@ -36,9 +36,7 @@ paths:
           required: true
           description: Adoption MongoDB ObjectId
           schema:
-            type: string
-            pattern: '^[a-fA-F0-9]{24}$'
-            example: 64f000000000000000000000
+            $ref: '#/components/schemas/ObjectId'
       responses:
         "200":
           description: Adoption found
@@ -80,17 +78,13 @@ paths:
           required: true
           description: User MongoDB ObjectId
           schema:
-            type: string
-            pattern: '^[a-fA-F0-9]{24}$'
-            example: 64f000000000000000000001
+            $ref: '#/components/schemas/ObjectId'
         - name: pid
           in: path
           required: true
           description: Pet MongoDB ObjectId
           schema:
-            type: string
-            pattern: '^[a-fA-F0-9]{24}$'
-            example: 64f000000000000000000002
+            $ref: '#/components/schemas/ObjectId'
       responses:
         "200":
           description: Adoption created successfully
